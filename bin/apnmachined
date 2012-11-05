@@ -34,7 +34,7 @@ opts = GetoptLong.new(
   ["--redis-port", "-p", GetoptLong::REQUIRED_ARGUMENT],
   ["--redis-uri", "-u", GetoptLong::REQUIRED_ARGUMENT],
   ["--redis-queue", "-Q", GetoptLong::REQUIRED_ARGUMENT],
-  ["--apn-sandbox", "-S", GetoptLong::REQUIRED_ARGUMENT],
+  ["--apn-sandbox", "-S", GetoptLong::NO_ARGUMENT],
   ["--log", "-l", GetoptLong::REQUIRED_ARGUMENT],
   ["--pem", "-c", GetoptLong::REQUIRED_ARGUMENT], 
   ["--pem-passphrase", "-s", GetoptLong::REQUIRED_ARGUMENT],
