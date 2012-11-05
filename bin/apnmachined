@@ -12,10 +12,10 @@ def usage
   puts " --redis-host [127.0.0.1]             bind address of proxy"
   puts " --redis-port [6379]                  port proxy listens on"
   puts " --redis-url [redis://username:pas127.0.0.1:] url of proxy"
+  puts " --redis-queue                        queue name for apn messages"
   puts " --log </var/log/apnmachined.log      the path to store the log"
   puts " --daemon                             to daemonize the server (include full path for pem files then)"
-  puts " --apn-host <gateway.push.apple.com>  the apn server host (use 'sandbox' to use apple sandboxes)"
-  puts " --apn-port <gateway.push.apple.com>  the apn server port "
+  puts " --apn-sandbox                        is use sandbox or not"
   puts " --help                               this message"
 end
 
@@ -33,8 +33,8 @@ opts = GetoptLong.new(
   ["--redis-host", "-a", GetoptLong::REQUIRED_ARGUMENT],
   ["--redis-port", "-p", GetoptLong::REQUIRED_ARGUMENT],
   ["--redis-uri", "-u", GetoptLong::REQUIRED_ARGUMENT],
-  ["--apn-host", "-b", GetoptLong::REQUIRED_ARGUMENT],
-  ["--apn-port", "-q", GetoptLong::REQUIRED_ARGUMENT],
+  ["--redis-queue", "-Q", GetoptLong::REQUIRED_ARGUMENT],
+  ["--apn-sandbox", "-S", GetoptLong::REQUIRED_ARGUMENT],
   ["--log", "-l", GetoptLong::REQUIRED_ARGUMENT],
   ["--pem", "-c", GetoptLong::REQUIRED_ARGUMENT], 
   ["--pem-passphrase", "-s", GetoptLong::REQUIRED_ARGUMENT],
@@ -45,8 +45,7 @@ opts = GetoptLong.new(
 redis_host = '127.0.0.1'
 redis_port = 6379
 redis_uri = nil
-apn_host = 'gateway.push.apple.com'
-apn_port = 2195
+apn_sandbox = false
 pem = nil
 pem_passphrase = nil
 daemon = false
@@ -65,14 +64,10 @@ opts.each do |opt, arg|
     redis_port = arg.to_i
   when '--redis-uri'
     redis_uri = arg
-  when '--apn-host'
-    if arg == 'sandbox'
-      apn_host = 'gateway.sandbox.push.apple.com'
-    else
-      apn_host = arg 
-    end
-  when '--apn-port'
-    apn_port = arg
+  when '--redis-queue'
+    redis_queue = arg
+  when '--apn-sandbox'
+    apn_sandbox = true
   when '--pem'
     pem = arg
   when '--pem-passphrase'
@@ -89,6 +84,6 @@ if pem.nil?
   exit 1
 else
   daemonize if daemon
-  server = ApnMachine::Server::Server.new(pem, pem_passphrase, redis_host, redis_port, redis_uri, apn_host, apn_port, log)
+  server = ApnMachine::Server::Server.new(pem, pem_passphrase, redis_host, redis_port, redis_uri, redis_queue, apn_sandbox, log)
   server.start!
 end

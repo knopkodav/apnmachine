@@ -25,9 +25,11 @@ module ApnMachine
       Yajl::Encoder.encode(p)
     end
 
-    def push
+    def push queue = nil
       raise 'No Redis client' if Config.redis.nil?
-      socket = Config.redis.rpush "apnmachine.queue", encode_payload
+      queue = queue || Config.queue
+      Config.logger.debug "Pushing message | QUEUE:#{queue}"
+      socket = Config.redis.rpush(queue, encode_payload)
     end
 
     def self.to_bytes(encoded_payload)
@@ -41,9 +43,10 @@ module ApnMachine
 
       Config.logger.debug "TOKEN:#{device_token} | ALERT:#{j}"
 
-      bin_token = [device_token].pack('H*')
-      # [1, 0, 86400, 0, bin_token.size, bin_token, 0, j.size, j].pack("cNNcca*cca*")
-      [0, 0, bin_token.size, bin_token, 0, j.size, j].pack("ccca*cca*")
+      # bin_token = [device_token].pack('H*')
+      # [0, 0, bin_token.size, bin_token, 0, j.size, j].pack("ccca*cca*")
+
+      [1, 0, 86400, 0, 32, device_token, 0, j.size, j].pack("cNNccH*cca*")      
     end
 
   end
