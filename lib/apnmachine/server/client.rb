@@ -11,6 +11,7 @@ module ApnMachine
         raise "The path to your pem file is not set." unless @pem
         raise "The path to your pem file does not exist!" unless File.exist?(@pem)
         @key, @cert = @pem, @pem
+        Config.logger.debug "Connecting to #{apn_host}:#{apn_port}"
         @connection = EM.connect(apn_host, apn_port, ApnMachine::Server::ServerConnection, self)
       end
         
@@ -19,7 +20,6 @@ module ApnMachine
       end
 
       def write(notif_bin)
-        Config.logger.debug "#{Time.now} New notif"
         @connection.send_data(notif_bin)
       end
 

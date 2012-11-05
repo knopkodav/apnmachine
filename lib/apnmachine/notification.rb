@@ -34,7 +34,6 @@ module ApnMachine
       notif_hash = Yajl::Parser.parse(encoded_payload)
 
       device_token = notif_hash.delete('device_token')
-      bin_token = [device_token].pack('H*')
       raise NoDeviceToken.new("No device token") unless device_token
 
       j = Yajl::Encoder.encode(notif_hash)
@@ -42,7 +41,9 @@ module ApnMachine
 
       Config.logger.debug "TOKEN:#{device_token} | ALERT:#{notif_hash.inspect}"
 
-      [0, 0, bin_token.size, bin_token, 0, j.size, j].pack("ccca*cca*")
+      [1, 0, 86400, 0, 32, device_token, 0, j.size, j].pack("cNNccH*cca*")
+      # bin_token = [device_token].pack('H*')
+      # [0, 0, bin_token.size, bin_token, 0, j.size, j].pack("ccca*cca*")
     end
 
   end
