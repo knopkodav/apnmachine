@@ -42,8 +42,8 @@ module ApnMachine
       Config.logger.debug "TOKEN:#{device_token} | ALERT:#{j}"
 
       bin_token = [device_token].pack('H*')
-      [1, 0, 86400, 0, bin_token.size, bin_token, 0, j.size, j].pack("cNNcca*cca*")
-      # [0, 0, bin_token.size, bin_token, 0, j.size, j].pack("ccca*cca*")
+      # [1, 0, 86400, 0, bin_token.size, bin_token, 0, j.size, j].pack("cNNcca*cca*")
+      [0, 0, bin_token.size, bin_token, 0, j.size, j].pack("ccca*cca*")
     end
 
   end
