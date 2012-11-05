@@ -14,6 +14,9 @@ module ApnMachine
       end
 
       def post_init
+        set_sock_opt(Socket::SOL_SOCKET, Socket::SO_KEEPALIVE, 1)
+        set_sock_opt(Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1)
+
         start_tls(
           :private_key_file => client.key,
           :cert_chain_file  => client.cert,
