@@ -45,6 +45,7 @@ opts = GetoptLong.new(
 redis_host = '127.0.0.1'
 redis_port = 6379
 redis_uri = nil
+redis_queue = nil
 apn_sandbox = false
 pem = nil
 pem_passphrase = nil
