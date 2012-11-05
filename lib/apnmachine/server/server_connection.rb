@@ -30,9 +30,9 @@ module ApnMachine
         Config.logger.info "Error"
         error_response = ErrorResponse.new(*data_array)
         Config.logger.warn(error_response.to_s)
-        if client.error_callback
-          client.error_callback.call(error_response)
-        end
+        # if client.error_callback
+        #   client.error_callback.call(error_response)
+        # end
       end
 
       def unbind

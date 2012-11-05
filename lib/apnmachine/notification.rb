@@ -39,10 +39,10 @@ module ApnMachine
       j = Yajl::Encoder.encode(notif_hash)
       raise PayloadTooLarge.new("The payload is larger than allowed: #{j.length}") if j.size > PAYLOAD_MAX_BYTES
 
-      Config.logger.debug "TOKEN:#{device_token} | ALERT:#{notif_hash.inspect}"
+      Config.logger.debug "TOKEN:#{device_token} | ALERT:#{j}"
 
-      [1, 0, 86400, 0, 32, device_token, 0, j.size, j].pack("cNNccH*cca*")
-      # bin_token = [device_token].pack('H*')
+      bin_token = [device_token].pack('H*')
+      [1, 0, 86400, 0, bin_token.size, bin_token, 0, j.size, j].pack("cNNcca*cca*")
       # [0, 0, bin_token.size, bin_token, 0, j.size, j].pack("ccca*cca*")
     end
 
